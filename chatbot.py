@@ -1,10 +1,13 @@
 import os
 from typing import Annotated, TypedDict
 
+from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage
-from langchain_ollama import ChatOllama
+from langchain_openai import ChatOpenAI
 from langgraph.graph import END, StateGraph
 from langgraph.graph.message import add_messages
+
+load_dotenv()
 
 
 class ChatState(TypedDict):
@@ -12,8 +15,7 @@ class ChatState(TypedDict):
 
 
 def build_chatbot():
-    model_name = os.getenv("OLLAMA_MODEL", "qwen2.5:3b")
-    llm = ChatOllama(model=model_name, temperature=0.7)
+    llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"), temperature=0.7)
 
     def chatbot_node(state: ChatState):
         response = llm.invoke(state["messages"])
@@ -27,6 +29,9 @@ def build_chatbot():
 
 
 def main():
+    if not os.getenv("OPENAI_API_KEY"):
+        raise ValueError("OPENAI_API_KEY is not set. Add it to your environment or .env file.")
+
     chatbot = build_chatbot()
     conversation = {"messages": []}
 
@@ -45,11 +50,7 @@ def main():
         try:
             result = chatbot.invoke(conversation)
         except Exception as exc:
-            print(
-                "Could not reach Ollama. Make sure Ollama is running and the model "
-                f"is installed (ollama pull {os.getenv('OLLAMA_MODEL', 'qwen2.5:3b')}).\n"
-                f"Details: {exc}"
-            )
+            print(f"Chatbot request failed: {exc}")
             conversation["messages"].pop()
             continue
 

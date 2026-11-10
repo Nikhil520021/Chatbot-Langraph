@@ -2,13 +2,13 @@
 
 A simple conversational chatbot built with LangGraph and the OpenAI chat model.
 
-## Setup
+Setup
 
 1. Create and activate a virtual environment:
    ```bash
    python -m venv .venv
-   source .venv/bin/activate   # Linux/macOS
-   .venv\\Scripts\\activate      # Windows
+   source .venv/bin/activate
+   .venv\\Scripts\\activate
    ```
 
 2. Install dependencies:

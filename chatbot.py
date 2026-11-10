@@ -9,7 +9,6 @@ from langgraph.graph.message import add_messages
 
 load_dotenv()
 
-
 class ChatState(TypedDict):
     messages: Annotated[list, add_messages]
 
